@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         DB::table('job_listings')->truncate();
         DB::table('users')->truncate();
         DB::table('user_job_bookmark')->truncate();
+        DB::table('applications')->truncate();
         Schema::enableForeignKeyConstraints();
 
         $this->call(TestUserSeeder::class);

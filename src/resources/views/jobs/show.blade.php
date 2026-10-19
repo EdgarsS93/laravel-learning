@@ -81,16 +81,68 @@
                         {{$job->benefits}}
                     </p>
                 </div>
+                @auth
                 <p class="my-5">
                     Put "Job Application" as the subject of your email
                     and attach your resume.
                 </p>
-                <a
-                    href="mailto:{{$job->contact_email}}"
-                    class="block w-full text-center px-5 py-2.5 shadow-sm rounded border text-base font-medium cursor-pointer text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-                >
-                    Apply Now
-                </a>
+                <div x-data="{open: @js($errors->any())}">
+                    <button
+                        @click="open = true"
+                        class="block w-full text-center px-5 py-2.5 shadow-sm rounded border text-base font-medium cursor-pointer text-indigo-700 bg-indigo-100 hover:bg-indigo-200 cursor-pointer"
+                    >
+                        Apply Now
+                    </button>
+                    <div
+                        x-cloak
+                        x-show="open"
+                        @click.away="open = false"
+                        class="fixed inset-0 flex items-center justify-center bg-gray-900/50"
+                    >
+                        <div class="relative bg-white rounded-lg p-6 shadow-md w-full max-w-md max-h-full overflow-y-scroll">
+                            <div
+                                @click="open = false"
+                                class="absolute right-0.5 top-0.5 flex items-center justify-center p-2 cursor-pointer"
+                            >
+                                <i class="fa fa-times-circle"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-4">
+                                Apply for {{$job->title}}
+                            </h3>
+                            <form
+                                method="POST"
+                                action="{{route('application.store', $job->id)}}"
+                                enctype="multipart/form-data"
+                            >
+                                @csrf
+                                <x-inputs.text id="full_name" name="full_name" label="Full Name"/>
+                                <x-inputs.text id="contact_phone" name="contact_phone" label="Contact Phone"/>
+                                <x-inputs.text id="contact_email" name="contact_email" label="Contact Email"/>
+                                <x-inputs.text-area id="message" name="message" label="Message"/>
+                                <x-inputs.text id="location" name="location" label="Location"/>
+                                <x-inputs.file id="resume" name="resume" label="Upload Your Resume (.pdf)"/>
+                                <button
+                                    type="submit"
+                                    class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                                >
+                                    Submit Application
+                                </button>
+                                <button
+                                    @click="open = false"
+                                    class="cursor-pointer bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded-md"
+                                >
+                                    Cancel Application
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @else
+                    <p class="my-5 flex items-center justify-center bg-gray-200 rounded-lg p-2">
+                        <i class="fa fa-info-circle"></i>
+                        You must be logged in to apply to job
+                    </p>
+                @endauth
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-md mt-6">
@@ -115,12 +167,11 @@
                 href="{{$job->company_website}}"
                 target="_blank"
                 class="text-blue-500"
-            >Visit Website</a
-            >
+            >Visit Website</a>
 
             @guest
-                <p class="bg-gray-500 rounded-2xl p-3 text-gray-800 w-full text-center">
-                    <i class="fa fa-circle-info mr-3"/>
+                <p class="bg-gray-200 rounded-full p-2 text-gray-800 text-xs w-full text-center">
+                    <i class="fa fa-circle-info mr-3"></i>
                     You must be logged in to bookmark this job
                 </p>
             @else
