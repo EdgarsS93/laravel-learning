@@ -2,6 +2,8 @@
 
 A Laravel 12 practice project running in Docker (PHP 8.2-FPM, Nginx, MySQL 8), with Tailwind CSS 4 compiled by Vite.
 
+Built while following the Udemy course [Laravel From Scratch](https://www.udemy.com/course/laravel-from-scratch).
+
 ## Requirements
 
 - [Docker](https://www.docker.com/) with Docker Compose
