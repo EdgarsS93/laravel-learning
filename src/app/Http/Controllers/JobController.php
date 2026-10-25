@@ -150,4 +150,33 @@ class JobController extends Controller
 
         return redirect()->route('jobs.index')->with('success', 'Job deleted successfully.');
     }
+
+    public function search(Request $request): View
+    {
+        $keywords = strtolower($request->input('keywords'));
+        $location = strtolower($request->input('location'));
+
+        $query = Job::query();
+
+        if (!empty($keywords)) {
+            $query->where(function ($q) use ($keywords) {
+                $q->whereRaw("LOWER(title) LIKE '%$keywords%'")
+                    ->orWhereRaw("LOWER(description) LIKE '%$keywords%'")
+                    ->orWhereRaw("LOWER(tags) LIKE '%$keywords%'");
+            });
+        }
+
+        if (!empty($location)) {
+            $query->where(function ($q) use ($location) {
+                $q->whereRaw("LOWER(address) LIKE '%$location%'")
+                    ->orWhereRaw("LOWER(city) LIKE '%$location%'")
+                    ->orWhereRaw("LOWER(state) LIKE '%$location%'")
+                    ->orWhereRaw("LOWER(zipcode) LIKE '%$location%'");
+            });
+        }
+
+        $jobs = $query->paginate(12);
+
+        return view('jobs.index', compact('jobs'));
+    }
 }

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/jobs/search', [JobController::class, 'search'])->name('jobs.search');
+
 Route::resource('jobs', JobController::class)
     ->middleware('auth')
     ->only(['create', 'store', 'edit', 'update', 'destroy']);
