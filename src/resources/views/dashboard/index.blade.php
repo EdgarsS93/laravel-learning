@@ -44,6 +44,49 @@
                         <!-- End Delete Form -->
                     </div>
                 </div>
+                <!--Appkications section-->
+                <div class="mt-4">
+                    <h4 class="text-lg font-semibold mb-4"> Job Applications</h4>
+                    @forelse($job->applications as $application)
+                        <div class="py-2">
+                           <p class="text-gray-800">
+                                <strong>Name: </strong> {{$application->full_name}}
+                            </p>
+                            <p class="text-gray-800">
+                                <strong>Phone: </strong> {{$application->contact_phone}}
+                            </p>
+                            <p class="text-gray-800">
+                                <strong>Email: </strong> {{$application->contact_email}}
+                            </p>
+                            <p class="text-gray-800">
+                                <strong>Message: </strong> {{$application->message}}
+                            </p>
+                            <p class="my-4">
+                                <a
+                                    href="{{asset('storage/' . $application->resume_path)}}"
+                                    class="text-blue-500 hover:underline"
+                                    download
+                                >
+                                    <i class="fa fa-download"></i> Download Resume
+                                </a>
+                            </p>
+                            <form
+                                method="POST"
+                                action="{{route('application.destroy', $application)}}"
+                                onsubmit="return confirm('Are you sure , that you wan to delete this application?')"
+                            >
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 cursor-pointer">
+                                    <i class="fa fa-trash"></i> Delete application
+                                </button>
+                            </form>
+                        </div>
+                    @empty
+                        <p class="text-gray-700">No applications for this job</p>
+                    @endforelse
+                </div>
+                <!--Appkications section end-->
             @empty
                 <p class="text-gray-700">Yuo have not job listings</p>
             @endforelse

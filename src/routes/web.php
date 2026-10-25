@@ -22,11 +22,11 @@ Route::resource('jobs', JobController::class)
 Route::middleware('guest')->group(function() {
     Route::get('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
     Route::get('/register', [RegisterController::class, 'register'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 });
+
+Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware('auth')
@@ -42,3 +42,4 @@ Route::middleware('auth')->group(function() {
 });
 
 Route::post('job/{job}/apply', [ApplicationController::class, 'store'])->name('application.store')->middleware('auth');
+Route::delete('applications/{application}/', [ApplicationController::class, 'destroy'])->name('application.destroy')->middleware('auth');
