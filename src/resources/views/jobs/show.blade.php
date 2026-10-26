@@ -146,7 +146,7 @@
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-                <div id="map"></div>
+                <div id="map" class="w-full h-96 z-40"></div>
             </div>
         </section>
 
@@ -194,3 +194,46 @@
         </aside>
     </div>
 </x-layout>
+
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // The map needs the public Mapbox token to load tiles
+        mapboxgl.accessToken = @json(config('services.mapbox.key'));
+
+        // Initialize the map
+        const map = new mapboxgl.Map({
+            container: 'map', // ID of the container element
+            style: 'mapbox://styles/mapbox/streets-v11', // Map style
+            center: [-74.5, 40], // Default center
+            zoom: 9, // Default zoom level
+        });
+
+        // Get address from Laravel view
+        const city = @json($job->city);
+        const state = @json($job->state);
+        const address = city + ', ' + state;
+
+        // Geocode the address with the Mapbox Geocoding API
+        fetch(`/geocode?address=${encodeURIComponent(address)}`)
+            .then((response) => {
+                if (!response.ok) throw new Error(`Geocoding failed: ${response.status}`);
+                return response.json();
+            })
+            .then((data) => {
+                if (data.features.length > 0) {
+                    const [longitude, latitude] = data.features[0].center;
+
+                    // Center the map and add a marker
+                    map.setCenter([longitude, latitude]);
+                    map.setZoom(14);
+
+                    new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
+                } else {
+                    console.error('No results found for the address.');
+                }
+            })
+            .catch((error) => console.error('Error geocoding address:', error));
+    });
+</script>

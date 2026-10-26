@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\GeocodeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -45,3 +46,5 @@ Route::middleware('auth')->group(function() {
 
 Route::post('job/{job}/apply', [ApplicationController::class, 'store'])->name('application.store')->middleware('auth');
 Route::delete('applications/{application}/', [ApplicationController::class, 'destroy'])->name('application.destroy')->middleware('auth');
+
+Route::get('/geocode', [GeocodeController::class, 'geocode']);
